@@ -3,37 +3,33 @@ using ApiAggregator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add services
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer(); // required for Swagger
+builder.Services.AddSwaggerGen();           // registers ISwaggerProvider
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<StatisticsService>();
-
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IExternalApiService, GitHubService>();
 builder.Services.AddScoped<IExternalApiService, NewsService>();
 builder.Services.AddScoped<IExternalApiService, WeatherService>();
-
 builder.Services.AddScoped<AggregationService>();
 builder.Services.AddHostedService<PerformanceMonitorService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    });
 }
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
+

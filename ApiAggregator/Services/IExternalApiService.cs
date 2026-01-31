@@ -1,6 +1,10 @@
-﻿namespace ApiAggregator.Services
+﻿using ApiAggregator.Models;
+
+namespace ApiAggregator.Services
 {
-    public class IExternalApiService
+    public interface IExternalApiService
     {
+        string Name { get; }
+        Task<IEnumerable<UnifiedResult>> FetchAsync();
     }
 }
